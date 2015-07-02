@@ -71,13 +71,12 @@ static double VS_TrGnSp; //Transitional generator speed (HSS side) between regio
 	double VS_CtInSp= 70.16224; //Transitional generator speed (HSS side) between regions 1 and 1 1/2, rad/s.
 	double VS_DT; //Communication interval for torque controller, sec.
 	double VS_MaxRat= 15000.0; //Maximum torque rate (in absolute value) in torque controller, N-m/s.
-	double VS_MinRat= -VS_MinRat; //Maximum torque rate (in absolute value) in torque controller, N-m/s.
 	double VS_MaxTq= 47402.91; //Maximum generator torque in Region 3 (HSS side), N-m. -- chosen to be 10% above VS_RtTq = 43.09355kNm
 	double VS_MinTq= 0.0; //Maximum generator torque in Region 3 (HSS side), N-m. -- chosen to be 10% above VS_RtTq = 43.09355kNm
-	double VS_Rgn2K= 2.332287; //Generator torque constant in Region 2 (HSS side), N-m/(rad/s)^2.
-	double VS_Rgn2Sp= 91.21091; //Transitional generator speed (HSS side) between regions 1 1/2 and 2, rad/s.
-	double VS_Rgn3MP= 0.01745329; //Minimum pitch angle at which the torque is computed as if we are in region 3 regardless of the generator speed, rad. -- chosen to be 1.0 degree above PC_MinPit
-	double VS_RtGnSp= 121.6805; //Rated generator speed (HSS side), rad/s. -- chosen to be 99% of PC_RefSpd
+	double VS_Rgn2K= 0.24; //Generator torque constant in Region 2 (HSS side), N-m/(rad/s)^2.
+	double VS_Rgn2Sp= 115.71521; //Transitional generator speed (HSS side) between regions 1 1/2 and 2, rad/s.
+	double VS_Rgn3MP= -0.017453; //Minimum pitch angle at which the torque is computed as if we are in region 3 regardless of the generator speed, rad. -- chosen to be 1.0 degree above PC_MinPit
+	double VS_RtGnSp= 157.08; //Rated generator speed (HSS side), rad/s. -- chosen to be 99% of PC_RefSpd
 	double VS_RtPwr= 5296610.0; //Rated generator generator power in Region 3, Watts. -- chosen to be 5MW divided by the electrical generator efficiency of 94.4%
 	double VS_SlPc= 10.0;//Rated generator slip percentage in Region 2 1/2, %.
 
@@ -124,10 +123,9 @@ static double VS_TrGnSp; //Transitional generator speed (HSS side) between regio
 	PC_MaxRat= GetMaximumPitchRate(turbine_id,0);
 	PC_MinRat= GetMinimumPitchRate(turbine_id,0);
 	PC_RefSpd= GetReferenceGeneratorSpeedAboveRated(turbine_id);
-	//VS_MaxRat= ...; //max torque rate
-	//VS_MinRat= ...; //min torque rate
-	//VS_MaxTq= ...; //max torque
-	//VS_MinTq= ...; //min torque
+	VS_MaxRat= 15000; //max torque rate
+	VS_MaxTq= 14743.3; //max torque
+	VS_MinTq= 0; //min torque
 
 	iStatus= (int) (Time!=0.0); //iStatus is 0 if Time==0.0, 1 otherwise
 #endif
@@ -142,6 +140,8 @@ static double VS_TrGnSp; //Transitional generator speed (HSS side) between regio
 #ifdef __USE_OLD_BLADED_INTERFACE__
 		*aviFAIL  = 1;
 		//strcpy_s(ErrMsg,512,"Running with torque and pitch control of the NREL offshore 5MW baseline wind turbine from DISCON.dll as written by J. Jonkman of NREL/NWTC for use in the IEA Annex XXIII OC3 studies. (reimplemented in C by Borja Fernandez-Gauna)");
+#else
+		VS_RtPwr= GetDemandedPower(turbine_id);
 #endif
 		//Determine some torque control parameters not specified directly:
 
@@ -351,7 +351,7 @@ static double VS_TrGnSp; //Transitional generator speed (HSS side) between regio
 			if ( iStatus == 0 )  LastGenTrq = GenTrq; //Initialize the value of LastGenTrq on the first pass only
 
 			TrqRate = ( GenTrq - LastGenTrq )/ElapTime; //Torque rate (unsaturated)
-			TrqRate = min( max( TrqRate, VS_MinRat ), VS_MaxRat ); //Saturate the torque rate using its maximum absolute value
+			TrqRate = min( max( TrqRate, -VS_MaxRat ), VS_MaxRat ); //Saturate the torque rate using its maximum absolute value
 			GenTrq  = LastGenTrq + TrqRate*ElapTime;                 //Saturate the command using the torque rate limit
 
 

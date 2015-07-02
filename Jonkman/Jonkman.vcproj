@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="&quot;..\Jonkman-bladed-4.5.dll&quot;"
+				OutputFile="&quot;..\..\Jonkman-bladed-4.5.dll&quot;"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\Jonkman.def"
 				GenerateDebugInformation="true"

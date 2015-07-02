@@ -75,7 +75,6 @@ void __declspec( dllexport ) __cdecl DISCON (float *avrSWAP //inout
 	double Time; //Current simulation time, sec.
 	double VS_DT; //Communication interval for torque controller, sec.
 	double VS_MaxRat= 15000.0; //Maximum torque rate (in absolute value) in torque controller, N-m/s.
-	double VS_MinRat= -VS_MaxRat; //Maximum torque rate (in absolute value) in torque controller, N-m/s.
 	double VS_MaxTq= 47402.91; //Maximum generator torque in Region 3 (HSS side), N-m. -- chosen to be 10% above VS_RtTq = 43.09355kNm
 	double VS_MinTq= 0.0; //Maximum generator torque in Region 3 (HSS side), N-m. -- chosen to be 10% above VS_RtTq = 43.09355kNm
 	double RotorSpeed;
@@ -127,10 +126,9 @@ void __declspec( dllexport ) __cdecl DISCON (float *avrSWAP //inout
 	PC_MinRat= GetMinimumPitchRate(turbine_id,0);
 	PC_RefSpd= GetReferenceGeneratorSpeedAboveRated(turbine_id);
 	PC_RefRotorSpd= GetReferenceGeneratorTorqueAboveRated(turbine_id);
-	//VS_MaxRat= ...; //max torque rate
-	//VS_MinRat= ...; //min torque rate
-	//VS_MaxTq= ...; //max torque
-	//VS_MinTq= ...; //min torque
+	VS_MaxRat= 15000; //max torque rate
+	VS_MaxTq= 14743.3; //max torque
+	VS_MinTq= 0; //min torque
 
 	iStatus= (int) (Time!=0.0); //iStatus is 0 if Time==0.0, 1 otherwise
 #endif
@@ -228,7 +226,7 @@ void __declspec( dllexport ) __cdecl DISCON (float *avrSWAP //inout
 			d_T_g= (-1.0/GenSpeedF)*(LastGenTrq*(A*GenSpeedF+d_omega_g)
 				-A*ratedPower + K_ALPHA*sgn(powerError));
 
-			d_T_g= min(max(d_T_g,VS_MinRat),VS_MaxRat);
+			d_T_g= min(max(d_T_g,-VS_MaxRat),VS_MaxRat);
 				
 			GenTrq= LastGenTrq + d_T_g*ElapTime;
 
