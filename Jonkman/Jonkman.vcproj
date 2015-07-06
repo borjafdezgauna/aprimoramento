@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\parameters.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -229,6 +233,10 @@
 			</File>
 			<File
 				RelativePath=".\Jonkman.h"
+				>
+			</File>
+			<File
+				RelativePath=".\parameters.h"
 				>
 			</File>
 			<File

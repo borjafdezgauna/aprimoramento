@@ -3,14 +3,11 @@
 
 #pragma once
 
-#ifndef __AFXWIN_H__
-	#error "include 'stdafx.h' before including this file for PCH"
-#endif
+#include "stdio.h"
+#include "string.h"
+#include "math.h"
+#include "float.h"
 
-#include "resource.h"		// main symbols
 
-
-// CBoukhezzarApp
-// See Boukhezzar.cpp for the implementation of this class
-//
-
+#define min(a,b) (((a)<(b))?(a):(b))
+#define max(a,b) (((a)>(b))?(a):(b))
